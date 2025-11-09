@@ -6,6 +6,8 @@ RUN mvn clean package -DskipTests
 
 FROM tomcat:10.1-jdk17-temurin
 COPY --from=build /app/target/realestate-portal.war /usr/local/tomcat/webapps/
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+COPY start-tomcat.sh /usr/local/bin/start-tomcat.sh
+RUN chmod +x /usr/local/bin/start-tomcat.sh
 
+EXPOSE 8080
+CMD ["/usr/local/bin/start-tomcat.sh"]

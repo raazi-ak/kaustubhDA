@@ -133,9 +133,58 @@ The application automatically creates the following tables:
 - `customers`: Customer information
 - `inquiries`: Customer inquiries for properties
 
+## Deployment to Render
+
+The application is configured for deployment on Render.com:
+
+### Prerequisites
+- Render account
+- PostgreSQL database on Render (or external)
+
+### Deployment Steps
+
+1. **Create a PostgreSQL Database on Render:**
+   - Go to Render Dashboard → New → PostgreSQL
+   - Note the connection details (host, port, database name, user, password)
+
+2. **Deploy the Web Service:**
+   - Go to Render Dashboard → New → Web Service
+   - Connect your GitHub repository
+   - Select the repository and branch
+   - Render will detect the `Dockerfile` automatically
+   - Set the following environment variables:
+     - `PORT`: 8080 (Render sets this automatically, but you can override)
+     - `DB_HOST`: Your PostgreSQL host (e.g., `dpg-xxxxx-a.oregon-postgres.render.com`)
+     - `DB_PORT`: 5432
+     - `DB_NAME`: Your database name
+     - `DB_USER`: Your database user
+     - `DB_PASSWORD`: Your database password
+     - `DB_URL`: (Optional) Full JDBC URL: `jdbc:postgresql://host:port/dbname`
+
+3. **Alternative: Use render.yaml**
+   - Push `render.yaml` to your repository
+   - Render will automatically create services based on the configuration
+   - Update environment variables in the Render dashboard
+
+### Port Configuration
+
+The application automatically:
+- Reads the `PORT` environment variable (provided by Render)
+- Configures Tomcat to listen on `0.0.0.0` (required for Render)
+- Falls back to port 8080 if `PORT` is not set
+
+### Database Connection
+
+The application supports two ways to configure the database:
+1. **Individual variables**: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
+2. **Full URL**: `DB_URL` (e.g., `jdbc:postgresql://host:port/dbname`)
+
+If environment variables are set, they override the default `persistence.xml` configuration.
+
 ## Notes
 
 - The application uses Hibernate's `update` mode for schema generation
 - Initial agent data can be added via `init-db/init.sql`
 - All entity relationships are properly configured with cascade operations
+- For Render deployment, ensure the database is accessible from the web service
 
