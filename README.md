@@ -152,7 +152,9 @@ The application is configured for deployment on Render.com:
    - Connect your GitHub repository
    - Select the repository and branch
    - Render will detect the `Dockerfile` automatically
-   - Set the following environment variables:
+   - **Link your PostgreSQL database** to the web service (this automatically sets `DATABASE_URL`)
+   - Alternatively, manually set the following environment variables:
+     - `DATABASE_URL`: (Auto-set when linking database) Format: `postgresql://user:password@host:port/dbname`
      - `PORT`: 8080 (Render sets this automatically, but you can override)
      - `DB_HOST`: Your PostgreSQL host (e.g., `dpg-xxxxx-a.oregon-postgres.render.com`)
      - `DB_PORT`: 5432
@@ -175,11 +177,12 @@ The application automatically:
 
 ### Database Connection
 
-The application supports two ways to configure the database:
-1. **Individual variables**: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
-2. **Full URL**: `DB_URL` (e.g., `jdbc:postgresql://host:port/dbname`)
+The application supports multiple ways to configure the database (in order of priority):
+1. **DATABASE_URL** (Recommended for Render): Automatically set when you link a PostgreSQL database to your web service. Format: `postgresql://user:password@host:port/dbname`
+2. **DB_URL**: Full JDBC URL (e.g., `jdbc:postgresql://host:port/dbname`)
+3. **Individual variables**: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
 
-If environment variables are set, they override the default `persistence.xml` configuration.
+The application automatically parses `DATABASE_URL` and converts it to JDBC format. If environment variables are set, they override the default `persistence.xml` configuration.
 
 ## Notes
 
