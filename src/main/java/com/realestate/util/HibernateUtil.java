@@ -3,6 +3,8 @@ package com.realestate.util;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +26,16 @@ public class HibernateUtil {
             String dbPort = System.getenv("DB_PORT");
             String dbName = System.getenv("DB_NAME");
             
+            // Log environment variables for debugging (without sensitive data)
+            System.out.println("=== Database Connection Configuration ===");
+            System.out.println("DATABASE_URL: " + (databaseUrl != null ? "SET" : "NOT SET"));
+            System.out.println("DB_URL: " + (dbUrl != null ? "SET" : "NOT SET"));
+            System.out.println("DB_HOST: " + (dbHost != null ? dbHost : "NOT SET"));
+            System.out.println("DB_PORT: " + (dbPort != null ? dbPort : "NOT SET"));
+            System.out.println("DB_NAME: " + (dbName != null ? dbName : "NOT SET"));
+            System.out.println("DB_USER: " + (dbUser != null ? dbUser : "NOT SET"));
+            System.out.println("DB_PASSWORD: " + (dbPassword != null ? "SET" : "NOT SET"));
+            
             // Parse DATABASE_URL (Render format: postgresql://user:password@host:port/dbname)
             if (databaseUrl != null && !databaseUrl.isEmpty()) {
                 try {
@@ -36,13 +48,13 @@ public class HibernateUtil {
                         String userPass = url.substring(0, atIndex);
                         String hostPortDb = url.substring(atIndex + 1);
                         
-                        // Extract user and password
+                        // Extract user and password (handle URL encoding)
                         int colonIndex = userPass.indexOf(':');
                         if (colonIndex > 0) {
-                            dbUser = userPass.substring(0, colonIndex);
-                            dbPassword = userPass.substring(colonIndex + 1);
+                            dbUser = URLDecoder.decode(userPass.substring(0, colonIndex), StandardCharsets.UTF_8);
+                            dbPassword = URLDecoder.decode(userPass.substring(colonIndex + 1), StandardCharsets.UTF_8);
                         } else {
-                            dbUser = userPass;
+                            dbUser = URLDecoder.decode(userPass, StandardCharsets.UTF_8);
                         }
                         
                         // Extract host, port, and database
@@ -90,12 +102,36 @@ public class HibernateUtil {
                 props.put("jakarta.persistence.jdbc.password", dbPassword);
             }
             
+            // Log final configuration
+            System.out.println("=== Final JDBC Configuration ===");
+            if (props.containsKey("jakarta.persistence.jdbc.url")) {
+                String jdbcUrl = props.get("jakarta.persistence.jdbc.url");
+                // Mask password in URL for logging
+                String safeUrl = jdbcUrl.replaceAll("://[^:]+:[^@]+@", "://***:***@");
+                System.out.println("JDBC URL: " + safeUrl);
+            } else {
+                System.out.println("JDBC URL: Using persistence.xml defaults");
+            }
+            System.out.println("User: " + (props.containsKey("jakarta.persistence.jdbc.user") ? props.get("jakarta.persistence.jdbc.user") : "Using persistence.xml default"));
+            
+            // Validate that we have at least a URL or all connection components
+            boolean hasUrl = props.containsKey("jakarta.persistence.jdbc.url");
+            boolean hasAllComponents = dbHost != null && dbPort != null && dbName != null && dbUser != null;
+            
+            if (!hasUrl && !hasAllComponents) {
+                System.err.println("WARNING: No database connection configuration found in environment variables!");
+                System.err.println("Falling back to persistence.xml defaults (may not work in cloud environment)");
+            }
+            
             // Create EntityManagerFactory with overridden properties
             if (props.isEmpty()) {
+                System.out.println("Using persistence.xml configuration (no environment overrides)");
                 emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
             } else {
+                System.out.println("Using environment variable configuration");
                 emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, props);
             }
+            System.out.println("EntityManagerFactory created successfully");
         } catch (Exception e) {
             System.err.println("Failed to initialize EntityManagerFactory: " + e.getMessage());
             e.printStackTrace();
