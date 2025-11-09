@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Add Property Listing</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+<body>
+    <div class="header">
+        <h1>Add Property Listing</h1>
+    </div>
+    
+    <div class="nav-menu">
+        <h:link outcome="home" value="Home"/>
+        <h:link outcome="add-listing" value="Add Listing"/>
+        <h:link outcome="add-agent" value="Add Agent"/>
+        <h:link outcome="view-listings" value="View Listings"/>
+        <h:link outcome="contact-seller" value="Contact Seller"/>
+    </div>
+    
+    <div class="container">
+        <h:form id="addListingForm">
+            <h:messages styleClass="messages" globalOnly="false"/>
+            
+            <div class="form-group">
+                <h:outputLabel for="title" value="Title: *"/>
+                <h:inputText id="title" value="#{propertyBean.property.title}" 
+                           required="true" requiredMessage="Title is required" maxlength="200">
+                    <f:validateLength minimum="3" maximum="200" 
+                                    message="Title must be between 3 and 200 characters"/>
+                </h:inputText>
+                <h:message for="title" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="description" value="Description: *"/>
+                <h:inputTextarea id="description" value="#{propertyBean.property.description}" 
+                               required="true" requiredMessage="Description is required" maxlength="2000">
+                    <f:validateLength minimum="10" maximum="2000" 
+                                    message="Description must be between 10 and 2000 characters"/>
+                </h:inputTextarea>
+                <h:message for="description" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="price" value="Price (USD): *"/>
+                <div style="display: flex; align-items: center;">
+                    <span style="padding: 10px 12px; background-color: #f8f9fa; border: 1px solid #ccc; border-right: none; border-radius: 3px 0 0 3px; color: #555;">USD</span>
+                    <h:inputText id="price" value="#{propertyBean.property.price}" 
+                               required="true" requiredMessage="Price is required" 
+                               style="border-radius: 0 3px 3px 0; flex: 1;">
+                        <f:converter converterId="currencyConverter"/>
+                        <f:validateDoubleRange minimum="0.01" maximum="999999999.99" 
+                                              message="Price must be between $0.01 and $999,999,999.99"/>
+                    </h:inputText>
+                </div>
+                <h:message for="price" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="address" value="Address: *"/>
+                <h:inputText id="address" value="#{propertyBean.property.address}" 
+                           required="true" requiredMessage="Address is required" maxlength="500">
+                    <f:validateLength minimum="5" maximum="500" 
+                                    message="Address must be between 5 and 500 characters"/>
+                </h:inputText>
+                <h:message for="address" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="propertyType" value="Property Type: *"/>
+                <h:selectOneMenu id="propertyType" value="#{propertyBean.property.propertyType}" 
+                               required="true" requiredMessage="Property type is required">
+                    <f:selectItem itemValue="" itemLabel="Select Type"/>
+                    <f:selectItems value="#{filterBean.propertyTypes}" var="type" 
+                                 itemValue="#{type}" itemLabel="#{type}"/>
+                    <f:converter converterId="propertyCategoryConverter"/>
+                </h:selectOneMenu>
+                <h:message for="propertyType" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="listingDate" value="Listing Date: *"/>
+                <h:inputText id="listingDate" value="#{propertyBean.property.listingDate}" 
+                           required="true" requiredMessage="Listing date is required" type="date">
+                    <f:converter converterId="dateConverter"/>
+                </h:inputText>
+                <h:message for="listingDate" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="status" value="Status: *"/>
+                <h:selectOneMenu id="status" value="#{propertyBean.property.status}" 
+                               required="true" requiredMessage="Status is required">
+                    <f:selectItem itemValue="Available" itemLabel="Available"/>
+                    <f:selectItem itemValue="Sold" itemLabel="Sold"/>
+                    <f:selectItem itemValue="Pending" itemLabel="Pending"/>
+                    <f:selectItem itemValue="Rented" itemLabel="Rented"/>
+                </h:selectOneMenu>
+                <h:message for="status" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="agent" value="Agent: *"/>
+                <h:panelGroup rendered="#{propertyBean.hasAgents()}">
+                    <h:selectOneMenu id="agent" value="#{propertyBean.selectedAgentId}" 
+                                   required="true" requiredMessage="Agent is required">
+                        <f:selectItem itemValue="" itemLabel="Select Agent"/>
+                        <f:selectItems value="#{propertyBean.agents}" var="agent" 
+                                     itemValue="#{agent.id}" itemLabel="#{agent.name} - #{agent.agencyName}"/>
+                    </h:selectOneMenu>
+                    <h:message for="agent" styleClass="error-message"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{not propertyBean.hasAgents()}">
+                    <div class="warning-box">
+                        <p style="margin: 0 0 1rem 0; color: #856404; font-size: 1rem;">
+                            <strong>No agents available.</strong> Please add an agent first before creating a property listing.
+                        </p>
+                        <h:commandButton value="Add Agent Now" action="#{agentBean.navigateToAddAgent}" 
+                                       styleClass="btn" immediate="true"/>
+                    </div>
+                </h:panelGroup>
+            </div>
+            
+            <h:commandButton value="Add Listing" action="#{propertyBean.addProperty}" 
+                           styleClass="btn" rendered="#{propertyBean.hasAgents()}"/>
+            <h:commandButton value="Cancel" action="#{navigationBean.goToHome}" 
+                           styleClass="btn btn-secondary" immediate="true"/>
+        </h:form>
+    </div>
+</body>
+</html>
+

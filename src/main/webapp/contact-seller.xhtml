@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Contact Seller</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+<body>
+    <div class="header">
+        <h1>Contact Seller</h1>
+    </div>
+    
+    <div class="nav-menu">
+        <h:link outcome="home" value="Home"/>
+        <h:link outcome="add-listing" value="Add Listing"/>
+        <h:link outcome="add-agent" value="Add Agent"/>
+        <h:link outcome="view-listings" value="View Listings"/>
+        <h:link outcome="contact-seller" value="Contact Seller"/>
+    </div>
+    
+    <div class="container">
+        <h:form id="inquiryForm">
+            <h:messages styleClass="messages" globalOnly="false"/>
+            
+            <div class="form-group">
+                <h:outputLabel for="property" value="Select Property: *"/>
+                <h:selectOneMenu id="property" value="#{inquiryBean.selectedPropertyId}" 
+                               required="true" requiredMessage="Please select a property">
+                    <f:selectItem itemValue="" itemLabel="Select Property"/>
+                    <f:selectItems value="#{inquiryBean.availableProperties}" var="prop" 
+                                 itemValue="#{prop.id}" 
+                                 itemLabel="#{prop.title} - #{prop.address} - $#{prop.price}"/>
+                </h:selectOneMenu>
+                <h:message for="property" styleClass="error-message"/>
+            </div>
+            
+            <h3>Your Contact Information</h3>
+            
+            <div class="form-group">
+                <h:outputLabel for="customerName" value="Name: *"/>
+                <h:inputText id="customerName" value="#{inquiryBean.customer.name}" 
+                           required="true" requiredMessage="Name is required" maxlength="100">
+                    <f:validateLength minimum="2" maximum="100" 
+                                    message="Name must be between 2 and 100 characters"/>
+                </h:inputText>
+                <h:message for="customerName" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="customerEmail" value="Email: *"/>
+                <h:inputText id="customerEmail" value="#{inquiryBean.customer.email}" 
+                           required="true" requiredMessage="Email is required" type="email">
+                    <f:validateRegex pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" 
+                                   message="Please enter a valid email address"/>
+                </h:inputText>
+                <h:message for="customerEmail" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="customerPhone" value="Phone: *"/>
+                <h:inputText id="customerPhone" value="#{inquiryBean.customer.phone}" 
+                           required="true" requiredMessage="Phone is required" type="tel" maxlength="20">
+                    <f:validateRegex pattern="[\d\s\-\+\(\)]+" 
+                                   message="Please enter a valid phone number"/>
+                    <f:validateLength minimum="10" maximum="20" 
+                                    message="Phone number must be between 10 and 20 characters"/>
+                </h:inputText>
+                <h:message for="customerPhone" styleClass="error-message"/>
+            </div>
+            
+            <div class="form-group">
+                <h:outputLabel for="message" value="Message: *"/>
+                <h:inputTextarea id="message" value="#{inquiryBean.inquiry.message}" 
+                               required="true" requiredMessage="Message is required" maxlength="2000">
+                    <f:validateLength minimum="10" maximum="2000" 
+                                    message="Message must be between 10 and 2000 characters"/>
+                </h:inputTextarea>
+                <h:message for="message" styleClass="error-message"/>
+            </div>
+            
+            <h:commandButton value="Submit Inquiry" action="#{inquiryBean.submitInquiry}" 
+                           styleClass="btn"/>
+            <h:commandButton value="Cancel" action="#{navigationBean.goToViewListings}" 
+                           styleClass="btn btn-secondary" immediate="true"/>
+        </h:form>
+    </div>
+</body>
+</html>
+

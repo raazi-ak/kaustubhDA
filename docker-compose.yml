@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: realestate-postgres
+    environment:
+      POSTGRES_DB: realestate_db
+      POSTGRES_USER: realestate_user
+      POSTGRES_PASSWORD: realestate_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - realestate-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U realestate_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tomcat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: realestate-tomcat
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: realestate_db
+      DB_USER: realestate_user
+      DB_PASSWORD: realestate_pass
+    networks:
+      - realestate-network
+
+networks:
+  realestate-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+

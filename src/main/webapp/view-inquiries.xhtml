@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Property Inquiries</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+<body>
+    <div class="header">
+        <h1>Property Inquiries</h1>
+    </div>
+    
+    <div class="nav-menu">
+        <h:link outcome="home" value="Home"/>
+        <h:link outcome="add-listing" value="Add Listing"/>
+        <h:link outcome="add-agent" value="Add Agent"/>
+        <h:link outcome="view-listings" value="View Listings"/>
+        <h:link outcome="contact-seller" value="Contact Seller"/>
+    </div>
+    
+    <div class="container">
+        <h:panelGroup rendered="#{viewInquiryBean.selectedProperty != null}">
+            <h2>Inquiries for: #{viewInquiryBean.selectedProperty.title}</h2>
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #e0e0e0;">
+                <p><strong>Address:</strong> #{viewInquiryBean.selectedProperty.address}</p>
+                <p><strong>Type:</strong> #{viewInquiryBean.selectedProperty.propertyType}</p>
+                <p><strong>Price:</strong> 
+                    <h:outputText value="#{viewInquiryBean.selectedProperty.price}">
+                        <f:converter converterId="currencyConverter"/>
+                    </h:outputText>
+                </p>
+                <p><strong>Agent:</strong> #{viewInquiryBean.selectedProperty.agent.name} (#{viewInquiryBean.selectedProperty.agent.agencyName})</p>
+            </div>
+            
+            <h3>Customer Inquiries (#{viewInquiryBean.inquiryCount})</h3>
+            
+            <h:panelGroup rendered="#{not empty viewInquiryBean.inquiries}">
+                <div style="display: grid; gap: 20px; margin-top: 20px;">
+                    <ui:repeat value="#{viewInquiryBean.inquiries}" var="inquiry">
+                        <div class="property-card" style="border-left: 4px solid #2c5aa0;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <p style="margin: 0 0 8px 0;"><strong>Customer:</strong> #{inquiry.customer.name}</p>
+                                    <p style="margin: 0 0 8px 0;"><strong>Email:</strong> #{inquiry.customer.email}</p>
+                                    <p style="margin: 0;"><strong>Phone:</strong> #{inquiry.customer.phone}</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <p style="margin: 0 0 8px 0;"><strong>Status:</strong> 
+                                        <span style="padding: 4px 10px; border-radius: 3px; background-color: #e0f7fa; color: #00796b; font-size: 12px;">
+                                            #{inquiry.status}
+                                        </span>
+                                    </p>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">
+                                        <strong>Date:</strong> 
+                                        <h:outputText value="#{inquiry.inquiryDate}">
+                                            <f:converter converterId="dateConverter"/>
+                                        </h:outputText>
+                                    </p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                                <p style="margin: 0 0 8px 0;"><strong>Message:</strong></p>
+                                <p style="margin: 0; color: #555; line-height: 1.6;">#{inquiry.message}</p>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+            </h:panelGroup>
+            
+            <h:panelGroup rendered="#{empty viewInquiryBean.inquiries}">
+                <p style="text-align: center; color: #666; padding: 2rem; background-color: #f8f9fa; border-radius: 4px;">
+                    No inquiries found for this property.
+                </p>
+            </h:panelGroup>
+        </h:panelGroup>
+        
+        <h:panelGroup rendered="#{viewInquiryBean.selectedProperty == null}">
+            <p style="text-align: center; color: #666; padding: 2rem;">
+                No property selected. Please select a property from the listings page.
+            </p>
+        </h:panelGroup>
+        
+        <div style="margin-top: 30px;">
+            <h:form>
+                <h:commandButton value="Back to Listings" action="#{navigationBean.goToViewListings}" 
+                               styleClass="btn"/>
+                <h:commandButton value="Home" action="#{navigationBean.goToHome}" 
+                               styleClass="btn btn-secondary"/>
+            </h:form>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Real Estate Portal - Home</title>
+    <h:outputStylesheet library="css" name="styles.css"/>
+</h:head>
+<body>
+    <div class="header">
+        <h1>Real Estate Listing Portal</h1>
+    </div>
+    
+    <div class="nav-menu">
+        <h:link outcome="home" value="Home"/>
+        <h:link outcome="add-listing" value="Add Listing"/>
+        <h:link outcome="add-agent" value="Add Agent"/>
+        <h:link outcome="view-listings" value="View Listings"/>
+        <h:link outcome="contact-seller" value="Contact Seller"/>
+    </div>
+    
+    <div class="container">
+        <h2>Welcome to Real Estate Portal</h2>
+        <p>Your one-stop destination for property listings and real estate services. Find your dream home or list your property with ease.</p>
+        
+        <h3>Features:</h3>
+        <ul>
+            <li>Browse and search property listings</li>
+            <li>Add new property listings</li>
+            <li>Contact sellers and agents</li>
+            <li>Filter and sort properties</li>
+        </ul>
+        
+        <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+            <h:form>
+                <h:commandButton value="View All Listings" action="#{navigationBean.goToViewListings}" 
+                               styleClass="btn"/>
+                <h:commandButton value="Add New Listing" action="#{navigationBean.goToAddListing}" 
+                               styleClass="btn btn-secondary"/>
+            </h:form>
+        </div>
+    </div>
+</body>
+</html>
+

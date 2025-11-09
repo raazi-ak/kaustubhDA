@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+              https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
+              version="4.0">
+    
+    <navigation-rule>
+        <from-view-id>home.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>add-listing</from-outcome>
+            <to-view-id>/add-listing.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>view-listings</from-outcome>
+            <to-view-id>/view-listings.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>contact-seller</from-outcome>
+            <to-view-id>/contact-seller.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>add-listing.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>view-listings</from-outcome>
+            <to-view-id>/view-listings.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/home.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>add-agent</from-outcome>
+            <to-view-id>/add-agent.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>add-agent.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>add-listing</from-outcome>
+            <to-view-id>/add-listing.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>view-listings.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>contact-seller</from-outcome>
+            <to-view-id>/contact-seller.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/home.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>view-inquiries</from-outcome>
+            <to-view-id>/view-inquiries.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>view-inquiries.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>view-listings</from-outcome>
+            <to-view-id>/view-listings.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>contact-seller.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>view-listings</from-outcome>
+            <to-view-id>/view-listings.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <converter>
+        <converter-id>currencyConverter</converter-id>
+        <converter-class>com.realestate.converter.CurrencyConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>dateConverter</converter-id>
+        <converter-class>com.realestate.converter.DateConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>propertyCategoryConverter</converter-id>
+        <converter-class>com.realestate.converter.PropertyCategoryConverter</converter-class>
+    </converter>
+    
+</faces-config>
+
