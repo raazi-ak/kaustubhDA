@@ -51,7 +51,7 @@ public class HibernateUtil {
     }
 
     public static EntityManager getEntityManager() {
-        return emf.getEntityManager();
+        return emf.createEntityManager();
     }
 
     public static void closeEntityManagerFactory() {
